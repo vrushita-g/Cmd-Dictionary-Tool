@@ -1,0 +1,8 @@
+# Dependency directory
+node_modules
+
+#Webstorm files
+.idea/
+
+#package-lock
+package-lock.json
