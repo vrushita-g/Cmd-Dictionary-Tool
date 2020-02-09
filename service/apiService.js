@@ -15,11 +15,30 @@ let apiService = {
     },
     displaySynonyms: async function (word) {
         let apiUrl = CONFIG.API_URL.BASE_URL + '/word/' + word + CONFIG.API_URL.SYNONYMS + CONFIG.API_KEY;
-        let definitions = await requestApi(apiUrl);
-        if (definitions) {
-            console.log(chalk.green('synonyms'.toUpperCase()));
-            for (let synonym of synonyms) {
-                console.log(chalk.blue(synonym.text))
+        let resp = await requestApi(apiUrl);
+        if(resp){
+            let synonyms = resp.find(x => x.relationshipType === 'synonym');
+            if (synonyms) {
+                console.log(chalk.green('synonyms'.toUpperCase()));
+                for (let synonym of synonyms.words) {
+                    console.log(chalk.blue(synonym))
+                }
+            }
+        }
+
+    },
+    displayAntonyms: async function (word) {
+        let apiUrl = CONFIG.API_URL.BASE_URL + '/word/' + word + CONFIG.API_URL.ANTONYMS + CONFIG.API_KEY;
+        let resp = await requestApi(apiUrl);
+        if(resp){
+            let antonyms = resp.find(x => x.relationshipType === 'antonym');
+            if (antonyms) {
+                console.log(chalk.green('antonyms'.toUpperCase()));
+                for (let antonym of antonyms.words) {
+                    console.log(chalk.blue(antonym))
+                }
+            } else {
+                console.log(chalk.yellow('Antonyms not found for the given word.\n'));
             }
         }
     }
@@ -32,6 +51,7 @@ function requestApi(apiUrl) {
     };
     return RP(options)
         .then((response) => {
+            console.log(response);
             return JSON.parse(response);
         })
         .catch((err) => {
