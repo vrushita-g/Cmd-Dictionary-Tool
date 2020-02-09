@@ -41,6 +41,19 @@ let apiService = {
                 console.log(chalk.yellow('Antonyms not found for the given word.\n'));
             }
         }
+    },
+    displayExamples: async function (word) {
+        let apiUrl = CONFIG.API_URL.BASE_URL + '/word/' + word + CONFIG.API_URL.EXAMPLES + CONFIG.API_KEY;
+        let resp = await requestApi(apiUrl);
+        if(resp){
+            let examples = resp.examples.map(x => x.text);
+            if (examples) {
+                console.log(chalk.green('examples'.toUpperCase()))
+                for (let example of examples) {
+                    console.log(chalk.blue(example));
+                }
+            }
+        }
     }
 };
 
