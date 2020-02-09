@@ -16,7 +16,7 @@ let apiService = {
     displaySynonyms: async function (word) {
         let apiUrl = CONFIG.API_URL.BASE_URL + '/word/' + word + CONFIG.API_URL.SYNONYMS + CONFIG.API_KEY;
         let resp = await requestApi(apiUrl);
-        if(resp){
+        if (resp) {
             let synonyms = resp.find(x => x.relationshipType === 'synonym');
             if (synonyms) {
                 console.log(chalk.green('synonyms'.toUpperCase()));
@@ -30,7 +30,7 @@ let apiService = {
     displayAntonyms: async function (word) {
         let apiUrl = CONFIG.API_URL.BASE_URL + '/word/' + word + CONFIG.API_URL.ANTONYMS + CONFIG.API_KEY;
         let resp = await requestApi(apiUrl);
-        if(resp){
+        if (resp) {
             let antonyms = resp.find(x => x.relationshipType === 'antonym');
             if (antonyms) {
                 console.log(chalk.green('antonyms'.toUpperCase()));
@@ -45,7 +45,7 @@ let apiService = {
     displayExamples: async function (word) {
         let apiUrl = CONFIG.API_URL.BASE_URL + '/word/' + word + CONFIG.API_URL.EXAMPLES + CONFIG.API_KEY;
         let resp = await requestApi(apiUrl);
-        if(resp){
+        if (resp) {
             let examples = resp.examples.map(x => x.text);
             if (examples) {
                 console.log(chalk.green('examples'.toUpperCase()))
@@ -54,6 +54,30 @@ let apiService = {
                 }
             }
         }
+    },
+    displayFullDictionary: async function (word) {
+        self = this;
+        await self.displayDefinitions(word);
+        await self.displaySynonyms(word);
+        await self.displayAntonyms(word);
+        await self.displayExamples(word);
+
+    },
+    displayWordOfTheDay: async function () {
+        let apiUrl = CONFIG.API_URL.BASE_URL + CONFIG.API_URL.RANDOM_WORD + CONFIG.API_KEY,
+            self = this
+        let resp = await requestApi(apiUrl);
+        if (resp) {
+            if (!resp.word) {
+                console.log(COLORS.red(MESSAGES.NO_DATA));
+            } else {
+                console.log(resp.word);
+                self.displayFullDictionary(resp.word);
+            }
+        }
+    },
+    defaultAction: function (word) {
+        this.displayWordOfTheDay();
     }
 };
 
