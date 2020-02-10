@@ -3,10 +3,7 @@ const CHALK = require('chalk');
 const HELP = require('./routes/helpRoute');
 const ROUTES = require('./routes/generalRoute');
 
-let a = [{"text":"123"},{"text":"353"}]
-for (let i of a) {
-    console.log(i)
-}
+
 let inputInterface = READLINE.createInterface({
     input: process.stdin,
     output: process.stdout,
