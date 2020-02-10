@@ -1,5 +1,6 @@
 const CONFIG = require('../config');
 const API_SERVICE = require('../service/apiService');
+const GAME_ROUTE = require('./gameRoute');
 
 function GeneralRoutes(data) {
     // data
@@ -24,7 +25,7 @@ function GeneralRoutes(data) {
                 API_SERVICE.displayFullDictionary(this._word);
                 break;
             case CONFIG.COMMANDS.PLAY:
-                API_SERVICE.initializeGame(this._gameState);
+                GAME_ROUTE.run();
                 break;
             default:
                 API_SERVICE.defaultAction(this._command);

@@ -3,13 +3,18 @@ const chalk = require('chalk');
 const CONFIG = require('../config');
 
 let apiService = {
-    displayDefinitions: async function (word) {
+    displayDefinitions: async function (word, isGameRoute) {
         let apiUrl = CONFIG.API_URL.BASE_URL + '/word/' + word + CONFIG.API_URL.DEFINITIONS + CONFIG.API_KEY;
         let definitions = await requestApi(apiUrl);
         if (definitions) {
-            console.log(chalk.green('definitions'.toUpperCase()));
-            for (let definition of definitions) {
-                console.log(chalk.blue(definition.text))
+            if(isGameRoute){
+                return definitions.map(x => x.text)
+            }else{
+                console.log(chalk.green('definitions'.toUpperCase()));
+                for (let definition of definitions) {
+                    console.log(chalk.blue(definition.text))
+                }
+
             }
         }
     },
@@ -63,7 +68,7 @@ let apiService = {
         await self.displayExamples(word);
 
     },
-    displayWordOfTheDay: async function () {
+    displayWordOfTheDay: async function (isGameRoute) {
         let apiUrl = CONFIG.API_URL.BASE_URL + CONFIG.API_URL.RANDOM_WORD + CONFIG.API_KEY,
             self = this
         let resp = await requestApi(apiUrl);
@@ -72,9 +77,25 @@ let apiService = {
                 console.log(COLORS.red(MESSAGES.NO_DATA));
             } else {
                 console.log(resp.word);
-                self.displayFullDictionary(resp.word);
+                if(isGameRoute){
+                    return resp.word;
+                }else{
+                    self.displayFullDictionary(resp.word);
+                }
             }
         }
+    },
+     getSynonymsAndAntonyms: async function(word) {
+         let apiUrl = CONFIG.API_URL.BASE_URL + '/word/' + word + CONFIG.API_URL.SYNONYMS + CONFIG.API_KEY;
+         let resp = await requestApi(apiUrl);
+         if(resp){
+             let synonyms = resp.find(x => x.relationshipType === 'synonym');
+             let antonyms = resp.find(x => x.relationshipType === 'antonym');
+             return {
+                 synonyms: synonyms ? synonyms.words : [],
+                 antonyms: antonyms ? antonyms.words : []
+             }
+         }
     },
     defaultAction: function (word) {
         this.displayWordOfTheDay();
@@ -88,7 +109,6 @@ function requestApi(apiUrl) {
     };
     return RP(options)
         .then((response) => {
-            console.log(response);
             return JSON.parse(response);
         })
         .catch((err) => {

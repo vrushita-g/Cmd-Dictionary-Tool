@@ -13,7 +13,7 @@ let inputInterface = READLINE.createInterface({
     prompt: "ENTER>"
 });
 
-console.log(CHALK.green('Write help to get commands'));
+console.log(CHALK.green('Write "help" to get commands'));
 
 // attaching the listeners to our input interface's line event
 inputInterface.on('line', (line) => {
